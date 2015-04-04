@@ -4,15 +4,16 @@
 // @Compiler-Output "../Dist/Main.js"
 "use strict";
 class Proto{
-  static Encode(ToEncode){
-    let ToReturn = [];
-    ToReturn.push('*' + ToEncode.length);
-    ToEncode.forEach(function(Entry){
-      Entry = Entry.toString();
-      ToReturn.push('$' + Entry.length);
-      ToReturn.push(Entry);
+  static Encode(Request){
+    if(!(Request instanceof Array)){
+      Request = Request.toString();
+      return ['$' + Request.length, Request].join("\r\n");
+    }
+    let ToReturn = ['*' + Request.length];
+    Request.forEach(function(SubEntry){
+      ToReturn.push(Proto.Encode(SubEntry));
     });
-    return ToReturn.join("\\r\\n");
+    return ToReturn.join("\r\n");
   }
   static Decode(){
 
