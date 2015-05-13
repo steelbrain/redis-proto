@@ -38,7 +38,9 @@ class Proto{
       Offset += 2 + Count.length;
       ToReturn = parseInt(Count);
     } else if(Type === '-'){
-      throw new Error(Content.substr(Offset + 2, Count));
+      throw new Error(Content.substr(1, Content.length - 3));
+    } else if(Type === '+'){
+      ToReturn = Content.substr(1, Content.length - 3);
     }
     if(ReturnOffset){
       return {Offset: Offset, Content: ToReturn};
