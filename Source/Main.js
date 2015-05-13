@@ -24,6 +24,15 @@ class Proto{
     }
     return ToReturn;
   }
+  static *DecodeGen(Content){
+    while(true){
+      let Entry = Proto.DecodeEntry(Content);
+      if(!Entry) break;
+      yield Entry.value;
+      Content = Content.substr(Entry.offset);
+      if(!Content.length) break;
+    }
+  }
   static DecodeEntry(Content){
     let Type = Content.substr(0, 1);
     let Index = Content.indexOf("\r\n");
