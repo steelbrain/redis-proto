@@ -5,7 +5,7 @@
 "use strict";
 class Proto{
   static Encode(Request){
-    if(typeof Request !== 'object' || !Request.length){
+    if(typeof Request !== 'object' || typeof Request.length !== 'number'){
       Request = Request.toString();
       return ['$' + Request.length, Request].join("\r\n");
     }
