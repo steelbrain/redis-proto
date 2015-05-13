@@ -32,7 +32,7 @@ class Proto{
         ToReturn.push(Temp.Content);
       }
     } else if(Type === '$') {
-      ToReturn = Content.substr(Offset + 2, Count);
+      ToReturn = Count === -1 ? null : Content.substr(Offset + 2, Count);
       Offset += 2 + Count;
     } else if(Type === ':'){
       Offset += 2 + Count.length;
