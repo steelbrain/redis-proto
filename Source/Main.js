@@ -1,5 +1,3 @@
-
-
 // @Compiler-Transpile "true"
 // @Compiler-Output "../Dist/Main.js"
 "use strict";
@@ -13,39 +11,42 @@ class Proto{
     Array.prototype.forEach.call(Request, function(SubEntry){
       ToReturn.push(Proto.Encode(SubEntry));
     });
-    return ToReturn.join("\r\n");
+    return ToReturn.join("\r\n") + "\r\n";
   }
-  static Decode(Content, ReturnOffset){
-    let Type = Content.substr(0, 1);
-    let Offset = Content.indexOf("\r\n");
-    let Count = parseInt(Content.substr(1, Offset));
-    let ToReturn = null;
-    let Temp = null;
-
-    if(Type === '*'){
-      ToReturn = [];
-      Temp = {Offset: Offset};
-      for(let i = 0; i < Count; ++i){
-        let RemovedLength = Offset + 2;
-        Temp = Proto.Decode(Content.substr(Offset + 2), true);
-        Offset = Temp.Offset + RemovedLength;
-        ToReturn.push(Temp.Content);
-      }
-    } else if(Type === '$') {
-      ToReturn = Count === -1 ? null : Content.substr(Offset + 2, Count);
-      Offset += 2 + Count;
-    } else if(Type === ':'){
-      Offset += 2 + Count.length;
-      ToReturn = parseInt(Count);
-    } else if(Type === '-'){
-      throw new Error(Content.substr(1, Content.length - 3));
-    } else if(Type === '+'){
-      ToReturn = Content.substr(1, Content.length - 3);
-    }
-    if(ReturnOffset){
-      return {Offset: Offset, Content: ToReturn};
+  static Decode(Content){
+    let ToReturn = [];
+    while(true){
+      let Entry = Proto.DecodeEntry(Content);
+      if(!Entry) break;
+      ToReturn.push(Entry.value);
+      Content = Content.substr(Entry.offset);
+      if(!Content.length) break;
     }
     return ToReturn;
+  }
+  static DecodeEntry(Content){
+    let Type = Content.substr(0, 1);
+    let Index = Content.indexOf("\r\n");
+    let Count = parseInt(Content.substr(1, Index - 1));
+
+    if(Type === '*'){
+      let ToReturn = [];
+      let Offset = Index + 2;
+      for(var i = 1; i <= Count; ++i){
+        let Entry = Proto.DecodeEntry(Content.substr(Offset));
+        ToReturn.push(Entry.value);
+        Offset += Entry.offset;
+      }
+      return {value: ToReturn, offset: Offset};
+    } else if(Type === '$'){
+      return (Count === -1) ? {value: null, offset: Index + 2} : {value: Content.substr(Index + 2, Count), offset: Index + Count + 4};
+    } else if(Type === '-'){
+      throw new Error(Content.substr(1, Index - 1));
+    } else if(Type === '+'){
+      return {value: Content.substr(1, Index - 1), offset: Index + 2};
+    } else if(Type === ':'){
+      return {value: parseInt(Content.substr(1, Index - 1)), offset: Index + 2};
+    } else throw new Error("Error Decoding Redis Response");
   }
 }
 module.exports = Proto;
