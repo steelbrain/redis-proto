@@ -5,12 +5,12 @@
 "use strict";
 class Proto{
   static Encode(Request){
-    if(!(Request instanceof Array)){
+    if(typeof Request !== 'object' || !Request.length){
       Request = Request.toString();
       return ['$' + Request.length, Request].join("\r\n");
     }
     let ToReturn = ['*' + Request.length];
-    Request.forEach(function(SubEntry){
+    Array.prototype.forEach.call(Request, function(SubEntry){
       ToReturn.push(Proto.Encode(SubEntry));
     });
     return ToReturn.join("\r\n");
