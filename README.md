@@ -15,7 +15,7 @@ var
   RedisProto = require('redis-proto'),
   Encoded = RedisProto.Encode(['SET', 'KEY', 'VALUE']),
   Decoded = RedisProto.Decode(Encoded);
-console.log(Decoded); // ['SET', 'KEY', 'VALUE']
+console.log(Decoded[0]); // ['SET', 'KEY', 'VALUE']
 ```
 
 #### License
