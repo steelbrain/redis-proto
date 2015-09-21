@@ -3,10 +3,12 @@
 'use strict'
 class Proto {
   static Encode(Request) {
-    if (typeof Request === 'object' || typeof Request.length === 'number') {
+    if (Request === null || typeof Request === 'undefined') {
+      return "$0\r\n\r\n"
+    } else if (typeof Request === 'object' || (typeof Request !== 'string' && typeof Request.length === 'number')) {
       const toReturn = ['*' + Request.length]
       const length = Request.length
-      for (let i = 0 ; i <= length; ++i ) {
+      for (let i = 0 ; i < length; ++i ) {
         toReturn[i + 1] = Proto.Encode(Request[i])
       }
       return toReturn.join("\r\n")
