@@ -3,15 +3,21 @@
 'use strict'
 class Proto {
   static Encode(Request) {
-    if(typeof Request !== 'object' || typeof Request.length !== 'number'){
-      Request = Request.toString()
-      return ['$' + Request.length, Request].join("\r\n")
+    if (typeof Request === 'object' || typeof Request.length === 'number') {
+      const toReturn = ['*' + Request.length]
+      const length = Request.length
+      for (let i = 0 ; i <= length; ++i ) {
+        toReturn[i + 1] = Proto.Encode(Request[i])
+      }
+      return toReturn.join("\r\n")
+    } else if (typeof Request === 'number') {
+      return `:${Request}`
+    } else {
+      if (typeof Request !== 'string') {
+        Request = Request.toString('utf8')
+      }
+      return "$" + Request.length + "\r\n" + Request
     }
-    let ToReturn = ['*' + Request.length]
-    Array.prototype.forEach.call(Request, function(SubEntry){
-      ToReturn.push(Proto.Encode(SubEntry))
-    })
-    return ToReturn.join("\r\n") + "\r\n"
   }
   static Decode(Content) {
     let ToReturn = []
