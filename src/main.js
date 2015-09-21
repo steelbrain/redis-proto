@@ -1,6 +1,9 @@
 // @Compiler-Transpile "true"
 // @Compiler-Output "../dist/main.js"
 'use strict'
+
+const Buffer = require('buffer').Buffer
+
 class Proto {
   static Encode(Request) {
     if (Request === null || typeof Request === 'undefined') {
@@ -22,17 +25,23 @@ class Proto {
     }
   }
   static Decode(Content) {
-    let ToReturn = []
+    if (!Buffer.isBuffer(Content)) {
+      Content = new Buffer(Content)
+    }
+    const Buffers = []
     while(true){
       let Entry = Proto.DecodeEntry(Content)
       if(!Entry) break
-      ToReturn.push(Entry.value)
+      Buffers.push(Entry.value)
       Content = Content.slice(Entry.offset)
       if(!Content.length) break
     }
-    return ToReturn
+    return Buffer.concat(Buffers)
   }
   static *DecodeGen(Content) {
+    if (!Buffer.isBuffer(Content)) {
+      Content = new Buffer(Content)
+    }
     while(true){
       let Entry = Proto.DecodeEntry(Content)
       if(!Entry) break
@@ -56,14 +65,14 @@ class Proto {
       }
       return {value: ToReturn, offset: Offset}
     } else if(Type === 36){ // 36 : $
-      return (Count === -1) ? {value: null, offset: Index + 2} : {value: Content.slice(Index + 2, Count), offset: Index + Count + 4}
+      return (Count === -1) ? {value: null, offset: Index + 2} : {value: Content.slice(Index + 2, Index + 2 + Count), offset: Index + Count + 4}
     } else if(Type === 45){ // 45 : -
-      throw new Error(Content.slice(1, Index - 1))
+      throw new Error(Content.slice(1, Index))
     } else if(Type === 43){ // 43 : +
-      return {value: Content.slice(1, Index - 1), offset: Index + 2}
+      return {value: Content.slice(1, Index), offset: Index + 2}
     } else if(Type === 58){ // 58 : :
-      return {value: parseInt(Content.slice(1, Index - 1)), offset: Index + 2}
-    } else throw new Error("Error Decoding Redis Response")
+      return {value: Content.slice(1, Index), offset: Index + 2}
+    } else throw new Error('Error Decoding Redis Response')
   }
 }
 module.exports = Proto
