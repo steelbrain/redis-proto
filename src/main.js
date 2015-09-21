@@ -32,7 +32,6 @@ class Proto {
     let offset = 0
     while(true){
       let Entry = Proto.DecodeEntry(Content, offset)
-      if(!Entry) break
       Buffers.push(Entry.value)
       offset = Entry.offset
       if(Content.length === offset) break
@@ -43,12 +42,12 @@ class Proto {
     if (!Buffer.isBuffer(Content)) {
       Content = new Buffer(Content)
     }
+    let offset = 0
     while(true){
-      let Entry = Proto.DecodeEntry(Content)
-      if(!Entry) break
+      let Entry = Proto.DecodeEntry(Content, offset)
       yield Entry.value
-      Content = Content.slice(Entry.offset)
-      if(!Content.length) break
+      offset = Entry.offset
+      if(Content.length === offset) break
     }
   }
   static DecodeEntry(Content, startIndex){
