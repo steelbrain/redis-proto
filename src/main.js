@@ -27,7 +27,7 @@ class Proto {
       let Entry = Proto.DecodeEntry(Content)
       if(!Entry) break
       ToReturn.push(Entry.value)
-      Content = Content.substr(Entry.offset)
+      Content = Content.slice(Entry.offset)
       if(!Content.length) break
     }
     return ToReturn
@@ -37,7 +37,7 @@ class Proto {
       let Entry = Proto.DecodeEntry(Content)
       if(!Entry) break
       yield Entry.value
-      Content = Content.substr(Entry.offset)
+      Content = Content.slice(Entry.offset)
       if(!Content.length) break
     }
   }
@@ -56,13 +56,13 @@ class Proto {
       }
       return {value: ToReturn, offset: Offset}
     } else if(Type === 36){ // 36 : $
-      return (Count === -1) ? {value: null, offset: Index + 2} : {value: Content.substr(Index + 2, Count), offset: Index + Count + 4}
+      return (Count === -1) ? {value: null, offset: Index + 2} : {value: Content.slice(Index + 2, Count), offset: Index + Count + 4}
     } else if(Type === 45){ // 45 : -
-      throw new Error(Content.substr(1, Index - 1))
+      throw new Error(Content.slice(1, Index - 1))
     } else if(Type === 43){ // 43 : +
-      return {value: Content.substr(1, Index - 1), offset: Index + 2}
+      return {value: Content.slice(1, Index - 1), offset: Index + 2}
     } else if(Type === 58){ // 58 : :
-      return {value: parseInt(Content.substr(1, Index - 1)), offset: Index + 2}
+      return {value: parseInt(Content.slice(1, Index - 1)), offset: Index + 2}
     } else throw new Error("Error Decoding Redis Response")
   }
 }
