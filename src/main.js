@@ -34,8 +34,8 @@ class Proto {
       let Entry = Proto.DecodeEntry(Content, offset)
       if(!Entry) break
       Buffers.push(Entry.value)
-      offset += Entry.offset
-      if(!Content.length) break
+      offset = Entry.offset
+      if(Content.length === offset) break
     }
     return Buffers
   }
@@ -57,16 +57,17 @@ class Proto {
     const Count = parseInt(Content.toString('utf8', startIndex + 1, Index))
 
     if(Type === 42){ // *
-      let ToReturn = []
+      const ToReturn = []
       let Offset = Index + 2
       for(var i = 1; i <= Count; ++i){
-        let Entry = Proto.DecodeEntry(Content.slice(Offset))
+        let Entry = Proto.DecodeEntry(Content, Offset)
+        console.log(Entry.value)
         ToReturn.push(Entry.value)
-        Offset += Entry.offset
+        Offset = Entry.offset
       }
       return {value: ToReturn, offset: Offset}
     } else if(Type === 36){ // 36 : $
-      return (Count === -1) ? {value: null, offset: Index + 2} : {value: Content.slice(Index + 2, Index + 2 + Count), offset: Index + Count + 4}
+      return (Count === -1) ? {value: null, offset: Index + 2} : {value: Content.toString('utf8', Index + 2, Index + 2 + Count), offset: Index + Count + 4}
     } else if(Type === 45){ // 45 : -
       throw new Error(Content.slice(1, Index))
     } else if(Type === 43){ // 43 : +
