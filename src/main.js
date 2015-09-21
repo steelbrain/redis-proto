@@ -61,7 +61,6 @@ class Proto {
       let Offset = Index + 2
       for(var i = 1; i <= Count; ++i){
         let Entry = Proto.DecodeEntry(Content, Offset)
-        console.log(Entry.value)
         ToReturn.push(Entry.value)
         Offset = Entry.offset
       }
@@ -69,11 +68,11 @@ class Proto {
     } else if(Type === 36){ // 36 : $
       return (Count === -1) ? {value: null, offset: Index + 2} : {value: Content.toString('utf8', Index + 2, Index + 2 + Count), offset: Index + Count + 4}
     } else if(Type === 45){ // 45 : -
-      throw new Error(Content.slice(1, Index))
+      throw new Error(Content.toString('utf8', startIndex + 1, Index))
     } else if(Type === 43){ // 43 : +
-      return {value: Content.slice(1, Index), offset: Index + 2}
+      return {value: Content.toString('utf8', startIndex + 1, Index), offset: Index + 2}
     } else if(Type === 58){ // 58 : :
-      return {value: Content.slice(1, Index), offset: Index + 2}
+      return {value: parseInt(Content.toString('utf8', startIndex + 1, Index)), offset: Index + 2}
     } else throw new Error('Error Decoding Redis Response')
   }
 }
