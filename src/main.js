@@ -9,19 +9,19 @@ class Proto {
     if (Request === null || typeof Request === 'undefined') {
       return "$0\r\n\r\n"
     } else if (typeof Request === 'object' || (typeof Request !== 'string' && typeof Request.length === 'number')) {
-      const toReturn = ['*' + Request.length]
+      const toReturn = ['*' + Request.length + "\r\n"]
       const length = Request.length
       for (let i = 0 ; i < length; ++i ) {
         toReturn[i + 1] = Proto.Encode(Request[i])
       }
-      return toReturn.join("\r\n")
+      return toReturn.join('')
     } else if (typeof Request === 'number') {
-      return `:${Request}`
+      return ":" + Request + "\r\n"
     } else {
       if (typeof Request !== 'string') {
         Request = Request.toString('utf8')
       }
-      return "$" + Request.length + "\r\n" + Request
+      return "$" + Request.length + "\r\n" + Request + "\r\n"
     }
   }
   static Decode(Content) {
