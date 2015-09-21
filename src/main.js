@@ -42,11 +42,11 @@ class Proto {
     }
   }
   static DecodeEntry(Content){
-    let Type = Content.substr(0, 1)
-    let Index = Content.indexOf("\r\n")
-    let Count = parseInt(Content.substr(1, Index - 1))
+    const Type = Content.readInt8(0)
+    const Index = Content.indexOf("\r\n")
+    const Count = Content.slice(1, Index)
 
-    if(Type === '*'){
+    if(Type === 42){ // *
       let ToReturn = []
       let Offset = Index + 2
       for(var i = 1; i <= Count; ++i){
@@ -55,13 +55,13 @@ class Proto {
         Offset += Entry.offset
       }
       return {value: ToReturn, offset: Offset}
-    } else if(Type === '$'){
+    } else if(Type === 36){ // 36 : $
       return (Count === -1) ? {value: null, offset: Index + 2} : {value: Content.substr(Index + 2, Count), offset: Index + Count + 4}
-    } else if(Type === '-'){
+    } else if(Type === 45){ // 45 : -
       throw new Error(Content.substr(1, Index - 1))
-    } else if(Type === '+'){
+    } else if(Type === 43){ // 43 : +
       return {value: Content.substr(1, Index - 1), offset: Index + 2}
-    } else if(Type === ':'){
+    } else if(Type === 58){ // 58 : :
       return {value: parseInt(Content.substr(1, Index - 1)), offset: Index + 2}
     } else throw new Error("Error Decoding Redis Response")
   }
