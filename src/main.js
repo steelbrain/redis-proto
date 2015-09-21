@@ -44,13 +44,13 @@ class Proto {
   static DecodeEntry(Content){
     const Type = Content.readInt8(0)
     const Index = Content.indexOf("\r\n")
-    const Count = Content.slice(1, Index)
+    const Count = parseInt(Content.slice(1, Index).toString())
 
     if(Type === 42){ // *
       let ToReturn = []
       let Offset = Index + 2
       for(var i = 1; i <= Count; ++i){
-        let Entry = Proto.DecodeEntry(Content.substr(Offset))
+        let Entry = Proto.DecodeEntry(Content.slice(Offset))
         ToReturn.push(Entry.value)
         Offset += Entry.offset
       }
