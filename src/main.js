@@ -29,14 +29,15 @@ class Proto {
       Content = new Buffer(Content)
     }
     const Buffers = []
+    let offset = 0
     while(true){
-      let Entry = Proto.DecodeEntry(Content)
+      let Entry = Proto.DecodeEntry(Content, offset)
       if(!Entry) break
       Buffers.push(Entry.value)
-      Content = Content.slice(Entry.offset)
+      offset += Entry.offset
       if(!Content.length) break
     }
-    return Buffer.concat(Buffers)
+    return Buffers
   }
   static *DecodeGen(Content) {
     if (!Buffer.isBuffer(Content)) {
@@ -50,10 +51,10 @@ class Proto {
       if(!Content.length) break
     }
   }
-  static DecodeEntry(Content){
-    const Type = Content.readInt8(0)
-    const Index = Content.indexOf("\r\n")
-    const Count = parseInt(Content.slice(1, Index).toString())
+  static DecodeEntry(Content, startIndex){
+    const Type = Content.readInt8(startIndex)
+    const Index = Content.indexOf("\r\n", startIndex)
+    const Count = parseInt(Content.toString('utf8', startIndex + 1, Index))
 
     if(Type === 42){ // *
       let ToReturn = []
