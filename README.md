@@ -5,17 +5,30 @@ A super-lightweight Redis Protocol Encoder and Decoder in NodeJS. You can even u
 #### Installation
 
 ```js
-npm install redis-proto
+npm install --save redis-proto
 ```
 
 #### Usage
 
 ```js
-var
-  RedisProto = require('redis-proto'),
-  Encoded = RedisProto.Encode(['SET', 'KEY', 'VALUE']),
-  Decoded = RedisProto.Decode(Encoded);
-console.log(Decoded[0]); // ['SET', 'KEY', 'VALUE']
+'use babel'
+
+import {encode, decode} from 'redis-proto'
+
+const encoded = encode(['SET', 'KEY', 'VALUE'])
+const decoded = decode(encoded)
+
+console.log(decoded[0]) // ['SET', 'KEY', 'VALUE']
+```
+
+
+#### API
+
+```js
+export function encode(request): String
+export function decode(content): Array
+export function *decodeGen(content)
+
 ```
 
 #### License
