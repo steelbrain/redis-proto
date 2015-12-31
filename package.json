@@ -18,9 +18,6 @@
     "url": "https://github.com/steelbrain/Redis-Proto/issues"
   },
   "homepage": "https://github.com/steelbrain/Redis-Proto",
-  "scripts":{
-    "prepublish": "mkdir -p dist; uc-compile src/main.js"
-  },
   "devDependencies": {
     "babel-preset-steelbrain": "^1.0.0"
   }
