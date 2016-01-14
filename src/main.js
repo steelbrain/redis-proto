@@ -13,7 +13,7 @@ export function encode(request) {
     }
     return toReturn.join('')
   } else {
-    const stringRequest = typeof request !== 'string' ? request.toString('utf8') : request
+    const stringRequest = typeof request !== 'string' ? request.toString() : request
     return `$${stringRequest.length}\r\n${stringRequest}\r\n`
   }
 }
