@@ -12,8 +12,6 @@ export function encode(request) {
       toReturn[i + 1] = encode(request[i])
     }
     return toReturn.join('')
-  } else if (typeof request === 'number') {
-    return `:${request}\r\n`
   } else {
     const stringRequest = typeof request !== 'string' ? request.toString('utf8') : request
     return `$${stringRequest.length}\r\n${stringRequest}\r\n`
