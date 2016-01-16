@@ -2,19 +2,20 @@
 
 import {Buffer} from 'buffer'
 
-export function encode(request) {
-  if (request === null || typeof request === 'undefined') {
-    return '$0\r\n\r\n'
-  } else if (typeof request === 'object' || (typeof request !== 'string' && typeof request.length === 'number')) {
+export function encode(request, direct = true) {
+  if (request === null) {
+    return '$-1\r\n'
+  } else if (Array.isArray(request) && direct) {
     const toReturn = [`*${request.length}\r\n`]
     const length = request.length
     for (let i = 0 ; i < length; ++i ) {
-      toReturn[i + 1] = encode(request[i])
+      toReturn[i + 1] = encode(request[i], false)
     }
     return toReturn.join('')
   } else {
-    const stringRequest = typeof request !== 'string' ? request.toString() : request
-    return `$${stringRequest.length}\r\n${stringRequest}\r\n`
+    const type = typeof request
+    const stringish = type === 'object' || type === 'function' ? Object.prototype.toString.call(request) : type === 'string' ? request : String(request)
+    return `$${stringish.length}\r\n${stringish}\r\n`
   }
 }
 
