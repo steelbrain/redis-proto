@@ -3,33 +3,36 @@ Redis-Proto
 
 A super-lightweight Redis Protocol Encoder and Decoder in Javascript.
 
-#### Installation
+## Installation
 
 ```
 npm install --save redis-proto
 ```
 
-#### Usage
+## Usage
 
 ```js
-import { encode, decode } from 'redis-proto'
+import { encode, decode, decodeGen } from 'redis-proto'
 
 const encoded = encode(['SET', 'KEY', 'VALUE'])
 const decoded = decode(encoded)
 
 console.log(decoded[0]) // ['SET', 'KEY', 'VALUE']
+
+for (const entry of decodeGen(encoded)) {
+  console.log('entry', entry) // ['SET', 'KEY', 'VALUE']
+}
 ```
 
 
-#### API
+## API
 
 ```js
-// TODO: Update these
-export function encode(request): String
-export function decode(content): Array
-export function *decodeGen(content)
+export function encode(request: any): string
+export function decode(content: Buffer | string): Array<any>
+export function *decodeGen(content: Buffer | string): Generator<any, void, void>
 
 ```
 
-#### License
+## License
 This project is licensed under the terms of MIT License. See the LICENSE file for more info.
