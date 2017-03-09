@@ -2,7 +2,7 @@
   "name": "redis-proto",
   "version": "2.0.3",
   "description": "Lightweight Redis Protocol Encode/Decode in NodeJS",
-  "main": "lib/main.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/steelbrain/Redis-Proto.git"
