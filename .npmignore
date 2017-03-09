@@ -1,5 +1,7 @@
 .idea
 node_modules
-npm-debug.log
-/lib
+/src
+/spec
+.flowconfig
 .DS_Store
+decls
