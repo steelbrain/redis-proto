@@ -20,7 +20,7 @@ export function encode(request: any, encodeArray: boolean = true) {
   if (typeof request === 'object' || typeof request === 'function') {
     value = {}.toString.call(request)
   } else {
-    value = String(value)
+    value = String(request)
   }
   return `$${value.length}\r\n${value}\r\n`
 }
