@@ -97,53 +97,36 @@ export function decodeProgressive(content: Buffer, startIndex: number): { index:
 
   throw new Error('Malformed Input')
 }
-console.log(decodeProgressive(Buffer.from('*5\r\n$3\r\nfoo\r\n$3\r\nbar\r\n$-1\r\n+OK\r\n:9999\r\n'), 0))
 
-export function decode(content) {
-  const bufferContent = Buffer.isBuffer(content) ? content : new Buffer(content)
-  const Buffers = []
-  let offset = 0
-  while(true){
-    let Entry = decodeEntry(bufferContent, offset)
-    Buffers.push(Entry.value)
-    offset = Entry.offset
-    if(bufferContent.length === offset) break
-  }
-  return Buffers
-}
+export function *decodeGen(givenContent: Buffer | string): Generator<any, void, void> {
+  let index = 0
+  const content = Buffer.from(givenContent)
 
-export function *decodeGen(content) {
-  const bufferContent = Buffer.isBuffer(content) ? content : new Buffer(content)
-  let offset = 0
-  while(true){
-    let Entry = decodeEntry(bufferContent, offset)
-    yield Entry.value
-    offset = Entry.offset
-    if(bufferContent.length === offset) break
-  }
-}
-
-export function decodeEntry(content, startIndex) {
-  const type = content.readInt8(startIndex)
-  const index = content.indexOf('\r\n', startIndex)
-  const count = parseInt(content.toString('utf8', startIndex + 1, index))
-
-  if(type === 42){ // 42 : *
-    const ToReturn = []
-    let Offset = index + 2
-    for(var i = 1; i <= count; ++i){
-      let Entry = decodeEntry(content, Offset)
-      ToReturn.push(Entry.value)
-      Offset = Entry.offset
+  for (;;) {
+    const entry = decodeProgressive(content, index)
+    index = entry.index
+    yield entry.value
+    if (index === content.length) {
+      // We have read it all!
+      break
     }
-    return {value: ToReturn, offset: Offset}
-  } else if(type === 36){ // 36 : $
-    return (count === -1) ? {value: null, offset: index + 2} : {value: content.toString('utf8', index + 2, index + 2 + count), offset: index + count + 4}
-  } else if(type === 45){ // 45 : -
-    throw new Error(content.toString('utf8', startIndex + 1, index))
-  } else if(type === 43){ // 43 : +
-    return {value: content.toString('utf8', startIndex + 1, index), offset: index + 2}
-  } else if(type === 58){ // 58 : :
-    return {value: parseInt(content.toString('utf8', startIndex + 1, index)), offset: index + 2}
-  } else throw new Error('Error Decoding Redis Response')
+  }
+}
+
+export function decode(givenContent: Buffer | string): Array<any> {
+  let index = 0
+  const value = []
+  const content = Buffer.from(givenContent)
+
+  for (;;) {
+    const entry = decodeProgressive(content, index)
+    index = entry.index
+    value.push(entry.value)
+    if (index === content.length) {
+      // We have read it all!
+      break
+    }
+  }
+
+  return value
 }

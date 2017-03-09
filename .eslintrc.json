@@ -1,3 +1,6 @@
 {
-  "extends": "steelbrain"
+  "extends": "steelbrain",
+  "globals": {
+    "Generator": true
+  }
 }
