@@ -18,7 +18,17 @@
     "url": "https://github.com/steelbrain/Redis-Proto/issues"
   },
   "homepage": "https://github.com/steelbrain/Redis-Proto",
+  "scripts": {
+    "test": "apm test",
+    "lint": "eslint .",
+    "clean": "rm -rf lib",
+    "compile": "npm run clean; babel src --out-dir lib",
+    "watch": "npm run compile -- -w"
+  },
   "devDependencies": {
-    "babel-preset-steelbrain": "^1.0.0"
+    "babel-cli": "^6.22.2",
+    "babel-preset-steelbrain": "^5.0.0",
+    "eslint-config-steelbrain": "^2.0.0",
+    "flow-bin": "^0.41.0"
   }
 }
