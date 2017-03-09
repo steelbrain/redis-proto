@@ -1,7 +1,7 @@
 /* @flow */
 
-// TODO: Uncomment this
-// import { Buffer } from 'buffer'
+// $FlowIgnore: Pending on facebook/flow#3495
+import { Buffer } from 'buffer'
 
 // NOTE: The reason we have encodeArray option is because redis protocol
 // does not support nested arrays
