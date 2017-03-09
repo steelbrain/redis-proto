@@ -1,22 +1,28 @@
-'use babel'
+/* @flow */
 
-import {Buffer} from 'buffer'
+// TODO: Uncomment this
+// import { Buffer } from 'buffer'
 
-export function encode(request, direct = true) {
+// NOTE: The reason we have encodeArray option is because redis protocol
+// does not support nested arrays
+export function encode(request: any, encodeArray: boolean = true) {
   if (request === null) {
     return '$-1\r\n'
-  } else if (Array.isArray(request) && direct) {
-    const toReturn = [`*${request.length}\r\n`]
-    const length = request.length
-    for (let i = 0 ; i < length; ++i ) {
-      toReturn[i + 1] = encode(request[i], false)
-    }
-    return toReturn.join('')
-  } else {
-    const type = typeof request
-    const stringish = type === 'object' || type === 'function' ? Object.prototype.toString.call(request) : type === 'string' ? request : String(request)
-    return `$${stringish.length}\r\n${stringish}\r\n`
   }
+  if (Array.isArray(request) && encodeArray) {
+    const content = [`*${request.length}\r\n`]
+    for (let i = 0, length = request.length; i < length; i++) {
+      content.push(encode(request[i], false))
+    }
+    return content.join('')
+  }
+  let value
+  if (typeof request === 'object' || typeof request === 'function') {
+    value = {}.toString.call(request)
+  } else {
+    value = String(value)
+  }
+  return `$${value.length}\r\n${value}\r\n`
 }
 
 export function decode(content) {
