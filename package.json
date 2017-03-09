@@ -1,6 +1,6 @@
 {
   "name": "redis-proto",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "Lightweight Redis Protocol Encode/Decode in NodeJS",
   "main": "lib/index.js",
   "repository": {
