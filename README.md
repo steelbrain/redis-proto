@@ -1,6 +1,8 @@
 Redis-Proto
 ==========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/steelbrain/redis-proto.svg)](https://greenkeeper.io/)
+
 A super-lightweight Redis Protocol Encoder and Decoder in Javascript.
 
 ## Installation
